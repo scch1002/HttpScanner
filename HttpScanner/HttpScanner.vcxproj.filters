@@ -15,30 +15,42 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Scanner.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Result.h">
+    <ClInclude Include="EndAgents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HttpAgent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PrototypeScanner.h">
+    <ClInclude Include="HttpResourceAcquisition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PrototypeResult.h">
+    <ClInclude Include="HttpResourceAnalysis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EndAgents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="HttpAgent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PrototypeScanner.cpp">
+    <ClCompile Include="HttpResourceAcquisition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PrototypeResult.cpp">
+    <ClCompile Include="HttpResourceAnalysis.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpResult.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

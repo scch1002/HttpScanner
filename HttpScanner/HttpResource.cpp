@@ -1,50 +1,51 @@
 #include <regex>
 #include <pugixml.hpp>
-#include "PrototypeResult.h"
+#include "HttpResource.h"
 
 using namespace std;
-
 using namespace utility::conversions;
 using namespace concurrency::streams;
+using namespace HttpScanner_HttpScanner;
 
-HttpScanner_HttpScanner::PrototypeResult::~PrototypeResult()
+HttpResource::HttpResource(string resourceUrl, unique_ptr<wistringstream> resourceData)
+	: _resourceUrl(resourceUrl),
+	_resourceData(move(resourceData))
 {
 }
 
-std::unique_ptr<std::vector<std::string>> HttpScanner_HttpScanner::PrototypeResult::GetChildLinks()
+HttpResource::~HttpResource()
 {
-	wstring body;
-	try {
-		body = _response->extract_string().get();
-	}
-	catch (http_exception exception) {
-		return make_unique<vector<string>>();
-	}
-	
-	wistringstream ss(body);
+}
 
+string HttpResource::GetResourceUrl()
+{
+	return _resourceUrl;
+}
+
+std::unique_ptr<std::vector<std::string>> HttpResource::GetChildLinks()
+{
 	pugi::xml_document doc;
-	doc.load(ss);
+	doc.load(*_resourceData);
 
 	auto nodes = doc.select_nodes("//a");
-	
+
 	auto links = make_unique<std::vector<std::string>>();;
 
 	for (auto& node : nodes)
 	{
 		auto value = node.node().attribute("href").value();
-		 links->push_back(value);
+		links->push_back(value);
 	}
 
 	return move(links);
 }
 
-unique_ptr<vector<string>> HttpScanner_HttpScanner::PrototypeResult::CleanChildLinks(std::unique_ptr<std::vector<std::string>> childLinks)
+unique_ptr<vector<string>> HttpResource::CleanChildLinks(std::unique_ptr<std::vector<std::string>> childLinks)
 {
 	auto regexString = R"(^https?:\/\/.*)";
 
 	auto newEnd = remove_if(childLinks->begin(), childLinks->end(), [&regexString](string& link) {
-		
+
 		regex http_regex(regexString);
 		cmatch http_match;
 
@@ -53,19 +54,19 @@ unique_ptr<vector<string>> HttpScanner_HttpScanner::PrototypeResult::CleanChildL
 		return match;
 	});
 
-	if (newEnd != childLinks->end()) 
+	if (newEnd != childLinks->end())
 	{
 		childLinks->erase(newEnd, childLinks->end());
 	}
-	
+
 	return move(childLinks);
 }
 
-std::unique_ptr<std::vector<std::string>>  HttpScanner_HttpScanner::PrototypeResult::Analyze()
+unique_ptr<HttpResult> HttpScanner_HttpScanner::HttpResource::Analyze()
 {
 	auto resultLinks = GetChildLinks();
-	
+
 	auto cleanLinks = CleanChildLinks(move(resultLinks));
 
-	return move(cleanLinks);
+	return make_unique<HttpResult>(move(cleanLinks));
 }

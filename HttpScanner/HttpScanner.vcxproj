@@ -20,16 +20,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EndAgents.h" />
     <ClInclude Include="HttpAgent.h" />
-    <ClInclude Include="PrototypeResult.h" />
-    <ClInclude Include="PrototypeScanner.h" />
-    <ClInclude Include="Result.h" />
-    <ClInclude Include="Scanner.h" />
+    <ClInclude Include="HttpResource.h" />
+    <ClInclude Include="HttpResourceAcquisition.h" />
+    <ClInclude Include="HttpResourceAnalysis.h" />
+    <ClInclude Include="HttpResult.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EndAgents.cpp" />
     <ClCompile Include="HttpAgent.cpp" />
-    <ClCompile Include="PrototypeResult.cpp" />
-    <ClCompile Include="PrototypeScanner.cpp" />
+    <ClCompile Include="HttpResource.cpp" />
+    <ClCompile Include="HttpResourceAcquisition.cpp" />
+    <ClCompile Include="HttpResourceAnalysis.cpp" />
+    <ClCompile Include="HttpResult.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
