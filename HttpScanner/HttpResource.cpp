@@ -68,5 +68,5 @@ unique_ptr<HttpResult> HttpScanner_HttpScanner::HttpResource::Analyze()
 
 	auto cleanLinks = CleanChildLinks(move(resultLinks));
 
-	return make_unique<HttpResult>(move(cleanLinks));
+	return make_unique<HttpResult>(_resourceUrl, move(cleanLinks));
 }

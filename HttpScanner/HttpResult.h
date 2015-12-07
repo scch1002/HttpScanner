@@ -9,10 +9,12 @@ namespace HttpScanner_HttpScanner {
 	class HttpResult
 	{
 	private:
+		string _resourceUrl;
 		unique_ptr<vector<string>> _childLinks;
 	public:
-		HttpResult(unique_ptr<vector<string>> childLinks);
+		HttpResult(string resourceUrl, unique_ptr<vector<string>> childLinks);
 		~HttpResult();
+		string GetResourceUrl();
 		vector<string> GetChildLinks();
 	};
 }

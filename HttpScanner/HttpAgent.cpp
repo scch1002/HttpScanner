@@ -8,7 +8,8 @@ using namespace HttpScanner_HttpScanner;
 HttpScanner_HttpScanner::HttpAgent::HttpAgent(std::string url, std::string filePath) 
 	: _rootUrl(url),
 	_httpResourceAcquisitionAgents(make_unique<vector<shared_ptr<HttpResourceAcquisition>>>()),
-	_httpResourceAnalysisAgents(make_unique<vector<shared_ptr<HttpResourceAnalysis>>>())
+	_httpResourceAnalysisAgents(make_unique<vector<shared_ptr<HttpResourceAnalysis>>>()),
+	_dataContext(make_shared<DataContext>(url))
 {
 	_outputFile.open(filePath);
 }
@@ -20,10 +21,13 @@ HttpScanner_HttpScanner::HttpAgent::~HttpAgent()
 
 void HttpScanner_HttpScanner::HttpAgent::WriteToOutputFile(shared_ptr<EndAgents> endAgents)
 {
-	string url;
+	vector<unique_ptr<HttpResult>> resultsToOutput;
 	while (endAgents->IsSet()) {
-		if (_processedResourses->try_pop(url)) {
-			_outputFile << url << endl;
+		if (_dataContext->GetHttpResults(resultsToOutput)) {
+			for_each(resultsToOutput.begin(), resultsToOutput.end(), [this](unique_ptr<HttpResult>& httpResult) {
+				_outputFile << httpResult->GetResourceUrl() << endl;
+			});
+			resultsToOutput.clear();
 		}
 	}
 }
@@ -50,25 +54,12 @@ void HttpScanner_HttpScanner::HttpAgent::Run()
 	auto endbool = make_shared<atomic<bool>>(true);
 	auto endAgents = make_shared<EndAgents>(endbool);
 	
-	_processedResourses = make_shared<concurrent_queue<string>>();
-	_resourcesToAcquire = make_shared<concurrent_queue<string>>();
-	_resourcesAcquired = make_shared<concurrent_vector<string>>();
-	_resourcesToAnalyze = make_shared<concurrent_queue<shared_ptr<HttpResource>>>();
-
-	_resourcesToAcquire->push(_rootUrl);
-
 	for (auto count = 0; count < 10; count++) {
-		_httpResourceAcquisitionAgents->push_back(make_shared<HttpResourceAcquisition>(endAgents,
-			_resourcesToAcquire,
-			_resourcesAcquired,
-			_resourcesToAnalyze));
+		_httpResourceAcquisitionAgents->push_back(make_shared<HttpResourceAcquisition>(endAgents, _dataContext));
 	}
 
-	for (auto count = 0; count < 5; count++) {
-		_httpResourceAnalysisAgents->push_back(make_shared<HttpResourceAnalysis>(endAgents,
-			_resourcesToAcquire,
-			_resourcesToAnalyze,
-			_processedResourses));
+	for (auto count = 0; count < 1; count++) {
+		_httpResourceAnalysisAgents->push_back(make_shared<HttpResourceAnalysis>(endAgents, _dataContext));
 	}
 
 	auto agentThreads = StartAgents();

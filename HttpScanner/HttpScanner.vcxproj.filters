@@ -33,6 +33,9 @@
     <ClInclude Include="HttpResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DataContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EndAgents.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HttpResult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

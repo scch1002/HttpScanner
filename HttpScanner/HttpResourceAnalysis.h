@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "concurrent_queue.h"
 #include "EndAgents.h"
+#include "DataContext.h"
 #include "HttpResource.h"
 
 using namespace std;
@@ -13,15 +13,11 @@ namespace HttpScanner_HttpScanner {
 	private:
 		atomic<bool> _empty;
 		shared_ptr<EndAgents> _endAgents;
-		shared_ptr<concurrent_queue<string>> _resourcesToAcquire;
-		shared_ptr<concurrent_queue<shared_ptr<HttpResource>>> _resourcesToAnalyze;
-		shared_ptr<concurrent_queue<string>> _processedResources;
+		shared_ptr<DataContext> _dataContext;
 	public:
 		HttpResourceAnalysis(
 			shared_ptr<EndAgents> endAgents,
-			shared_ptr<concurrent_queue<string>> resourcesToAcquire,
-			shared_ptr<concurrent_queue<shared_ptr<HttpResource>>> resourcesToAnalyze,
-			shared_ptr<concurrent_queue<string>> processedResources
+			shared_ptr<DataContext> dataContext
 			);
 		~HttpResourceAnalysis();
 		bool IsEmpty();

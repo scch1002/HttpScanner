@@ -12,22 +12,18 @@ using namespace concurrency::streams;       // Asynchronous streams
 using namespace HttpScanner_HttpScanner;
 
 HttpResourceAcquisition::HttpResourceAcquisition(shared_ptr<EndAgents> endAgents, 
-	shared_ptr<concurrent_queue<string>> resourcesToAcquire, 
-	shared_ptr<concurrent_vector<string>> resourcesAcquired,
-	shared_ptr<concurrent_queue<shared_ptr<HttpResource>>> resourcesToAnalyze)
+	shared_ptr<DataContext> dataContext)
 	: _endAgents(endAgents),
-	_resourcesToAcquire(resourcesToAcquire),
-	_resourcesAcquired(resourcesAcquired),
-	_resourcesToAnalyze(resourcesToAnalyze)
+	_dataContext(dataContext)
 {
 }
 
-shared_ptr<HttpResource> HttpScanner_HttpScanner::HttpResourceAcquisition::Acquire(string url)
+unique_ptr<HttpResource> HttpScanner_HttpScanner::HttpResourceAcquisition::Acquire(string url)
 {
 	http_client client(to_string_t(url));
 	http_request request(methods::GET);
 	auto response = client.request(request).get();
-	return make_shared<HttpResource>(url,
+	return make_unique<HttpResource>(url,
 		make_unique<wistringstream>(response.extract_string().get())
 		);
 }
@@ -49,24 +45,15 @@ void HttpResourceAcquisition::Run()
 
 	while (_endAgents->IsSet())
 	{
-		if (_resourcesToAcquire->empty()) {
-			_empty.store(true);
-			continue;
-		}
-
-		if (!_resourcesToAcquire->try_pop(url)) {
+		if (!_dataContext->GetResourceToAcquire(url)) {
 			_empty.store(true);
 			continue;
 		}
 
 		_empty.store(false);
 
-		while (find(_resourcesAcquired->begin(), _resourcesAcquired->end(), url) != _resourcesAcquired->end()) {
-			_resourcesToAcquire->try_pop(url);
-		}
-
 		try {
-			_resourcesToAnalyze->push(Acquire(url));
+			_dataContext->AddHttpResourceToAnalyze(Acquire(url));
 		}
 		catch (http_exception httpException) {
 			continue;
@@ -75,7 +62,6 @@ void HttpResourceAcquisition::Run()
 			continue;
 		}
 
-		_resourcesAcquired->push_back(url);
 	}
 }
 

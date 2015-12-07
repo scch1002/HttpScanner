@@ -20,6 +20,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataContext.h" />
     <ClInclude Include="EndAgents.h" />
     <ClInclude Include="HttpAgent.h" />
     <ClInclude Include="HttpResource.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="HttpResult.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DataContext.cpp" />
     <ClCompile Include="EndAgents.cpp" />
     <ClCompile Include="HttpAgent.cpp" />
     <ClCompile Include="HttpResource.cpp" />
